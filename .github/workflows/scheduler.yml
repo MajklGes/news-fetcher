@@ -39,15 +39,9 @@ jobs:
           echo "Time: $CURRENT_TIME"
           echo "Day: $DAY_OF_WEEK"
 
-          if [ "$DAY_OF_WEEK" = "1" ] && [ "$CURRENT_TIME" = "19:55" ]; then
-            echo "Running reset"
-            python reset.py
-          elif [ "$CURRENT_TIME" = "08:00" ] || [ "$CURRENT_TIME" = "20:00" ]; then
-            echo "Running fetch"
-            python fetch.py
-          else
-            echo "Nothing to run"
-          fi
+          echo "Running manual fetch test"
+          python fetch.py
+          
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
