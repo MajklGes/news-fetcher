@@ -2,19 +2,16 @@ name: scheduled-tasks
 
 on:
   schedule:
-    # každý den 8:00
-    - cron: "0 8 * * *"
+    # každý den 8:00 Praha (07:00 UTC)
+    - cron: "0 7 * * *"
 
-    # každý den 20:00
-    - cron: "0 20 * * *"
+    # každý den 20:00 Praha (19:00 UTC)
+    - cron: "0 19 * * *"
 
-    # pondělí 19:55
-    - cron: "55 19 * * 1"
+    # pondělí 19:55 Praha (18:55 UTC)
+    - cron: "55 18 * * 1"
 
   workflow_dispatch:
-
-env:
-  TZ: Europe/Prague
 
 jobs:
   run-tasks:
@@ -33,15 +30,21 @@ jobs:
 
       - name: Decide what to run
         run: |
-          CURRENT_TIME=$(date +"%H:%M")
-          DAY_OF_WEEK=$(date +"%u")
+          CURRENT_TIME=$(date -u +"%H:%M")
+          DAY_OF_WEEK=$(date -u +"%u")
 
-          echo "Time: $CURRENT_TIME"
-          echo "Day: $DAY_OF_WEEK"
+          echo "UTC Time: $CURRENT_TIME"
+          echo "UTC Day: $DAY_OF_WEEK"
 
-          echo "Running manual fetch test"
-          python fetch.py
-          
+          if [ "$DAY_OF_WEEK" = "1" ] && [ "$CURRENT_TIME" = "18:55" ]; then
+            echo "Running reset"
+            python reset.py
+          elif [ "$CURRENT_TIME" = "07:00" ] || [ "$CURRENT_TIME" = "19:00" ]; then
+            echo "Running fetch"
+            python fetch.py
+          else
+            echo "Nothing to run"
+          fi
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
