@@ -11,9 +11,12 @@ SUPABASE_KEY = os.getenv("sb_publishable_L1AIP3X0SS5_-S5SbX0M7Q_KMWjfCLj")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 RSS_SOURCES = {
-    "ct24": "https://ct24.ceskatelevize.cz/rss/hlavni-zpravy",
-    "irozhlas": "https://www.irozhlas.cz/rss/irozhlas",
-    "novinky": "https://www.novinky.cz/rss"
+    "idnesBrno": "servis.idnes.cz/rss.aspx?c=brnoh",
+    "idnes": "servis.idnes.cz/rss.aspx?c=zpravodaj",
+    "refresher": "https://refresher.cz/rss",
+    "koktejl": "https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7aa?xml=rss",
+    "zahranicni": "https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7a5?xml=rss",
+    "domaci": "https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7ab?xml=rss",
 }
 
 # Zakázaná slova
