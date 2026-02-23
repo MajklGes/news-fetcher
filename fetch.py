@@ -5,14 +5,15 @@ from supabase import create_client
 
 print("🚀 Spouštím stahování zpráv...")
 
-SUPABASE_URL = os.getenv("https://ncxcpeeocknrotbzmfde.supabase.co")
-SUPABASE_KEY = os.getenv("sb_publishable_L1AIP3X0SS5_-S5SbX0M7Q_KMWjfCLj")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 RSS_SOURCES = {
-    "idnesBrno": "servis.idnes.cz/rss.aspx?c=brnoh",
-    "idnes": "servis.idnes.cz/rss.aspx?c=zpravodaj",
+    "idnesBrno": "https://servis.idnes.cz/rss.aspx?c=brnoh",
+    "idnes": "https://servis.idnes.cz/rss.aspx?c=zpravodaj",
+    "idnesSport": "https://servis.idnes.cz/rss.aspx?c=sport",
     "refresher": "https://refresher.cz/rss",
     "koktejl": "https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7aa?xml=rss",
     "zahranicni": "https://api-web.novinky.cz/v1/timelines/section_5ad5a5fcc25e64000bd6e7a5?xml=rss",
@@ -57,7 +58,9 @@ for source_name, rss_url in RSS_SOURCES.items():
             "url": url,
             "content": content,
             "source": source_name,
-            "hash": hash_value
+            "hash": hash_value,
+            "is_deleted": False,
+            "is_saved": False
         }
 
         supabase.table("articles").insert(data).execute()
