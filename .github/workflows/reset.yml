@@ -1,0 +1,28 @@
+name: reset
+
+on:
+  schedule:
+    # Pondělí 18:55 UTC (19:55 Praha zimní čas)
+    - cron: "55 18 * * 1"
+
+  workflow_dispatch:
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run reset
+        run: python reset.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
