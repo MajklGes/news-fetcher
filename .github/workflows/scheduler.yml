@@ -2,49 +2,52 @@ name: scheduled-tasks
 
 on:
   schedule:
-    # každý den 8:00 Praha (07:00 UTC)
+    # Fetch každý den 07:00 UTC
     - cron: "0 7 * * *"
 
-    # každý den 20:00 Praha (19:00 UTC)
+    # Fetch každý den 19:00 UTC
     - cron: "0 19 * * *"
 
-    # pondělí 19:55 Praha (18:55 UTC)
+    # Reset každé pondělí 18:55 UTC
     - cron: "55 18 * * 1"
 
   workflow_dispatch:
 
 jobs:
-  run-tasks:
+  fetch:
+    if: github.event.schedule == '0 7 * * *' || github.event.schedule == '0 19 * * *'
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt
 
-      - name: Decide what to run
-        run: |
-          CURRENT_TIME=$(date -u +"%H:%M")
-          DAY_OF_WEEK=$(date -u +"%u")
+      - name: Run fetch
+        run: python fetch.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
-          echo "UTC Time: $CURRENT_TIME"
-          echo "UTC Day: $DAY_OF_WEEK"
+  reset:
+    if: github.event.schedule == '55 18 * * 1'
+    runs-on: ubuntu-latest
 
-          if [ "$DAY_OF_WEEK" = "1" ] && [ "$CURRENT_TIME" = "18:55" ]; then
-            echo "Running reset"
-            python reset.py
-          elif [ "$CURRENT_TIME" = "07:00" ] || [ "$CURRENT_TIME" = "19:00" ]; then
-            echo "Running fetch"
-            python fetch.py
-          else
-            echo "Nothing to run"
-          fi
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run reset
+        run: python reset.py
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
