@@ -14,4 +14,12 @@ supabase.table("articles").update({
     "custom_title": None
 }).neq("id", "00000000-0000-0000-0000-000000000000").execute()
 
+response = supabase.table("articles").update({
+    "is_deleted": True,
+    "is_saved": False,
+    "custom_title": None
+}).neq("id", "00000000-0000-0000-0000-000000000000").execute()
+
+print(response)
+
 print("✅ Reset hotov")
